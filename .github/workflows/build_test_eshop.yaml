@@ -5,6 +5,7 @@ on:
   push:
 
 jobs:
+#Install section
   Install:
     runs-on: ubuntu-latest
 
@@ -56,6 +57,7 @@ jobs:
           npm rebuild node-sass --force
           npm run build -- --colors
 # End of build section
+
 # Test section
   Test: 
     needs: Install
