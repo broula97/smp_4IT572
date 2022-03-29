@@ -59,7 +59,7 @@ jobs:
 
       - name: Cache node modules and build folder
         if: ${{ github.ref =='refs/heads/master' }} # tohle rika, pokud je brench, ve ktere se nachazim master tak to proved a pokud neni tak to preskoc
-        uses: action/cache@v3
+        uses: actions/cache@v3
         with: 
           path: |
             ~/.npm
