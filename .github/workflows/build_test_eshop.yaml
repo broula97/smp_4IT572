@@ -56,6 +56,17 @@ jobs:
         run: |
           npm rebuild node-sass --force
           npm run build -- --colors
+
+      - name: Cache node modules and build folder
+        if: ${{ github.ref =='refs/heads/master' }} # tohle rika, pokud je brench, ve ktere se nachazim master tak to proved a pokud neni tak to preskoc
+        uses: actions/cache@v3
+        with: 
+          path: |
+            ~/.npm
+            ./node_modules
+            ./build
+          key: ${{ runner.os }}-build-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-build-${{ github.run_id }}
 # End of build section
 
 # Test section
@@ -84,3 +95,28 @@ jobs:
         run: |
           npm run test
 # End of test section
+
+# Deploy section
+  Depoly:
+    needs: [Build, Test]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref =='refs/heads/master' }}
+
+    steps:
+      - name: Git CheckOut
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_TOCKEN }}
+
+      - name: Load node modules and build folder
+        uses: actions/cache@v3
+        with: 
+          path: |
+            ~/.npm
+            ./node_modules
+            ./build
+          key: ${{ runner.os }}-build-${{ github.run_id }}
+        
+      - name: Deploy to Firebase
+        run: ./node_modules/.bin/firebase deploy --token ${{ secrets.FIREBASE_TOCKEN }}
+# End of deploy section
