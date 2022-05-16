@@ -1,10 +1,8 @@
-# Semestralni Prace na predmet 4IT572
 name: "Build and test our Eshop"
 
 on:
   workflow_dispatch:
   push:
-  pull_request:
 
 jobs:
 #Install section
@@ -95,20 +93,28 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run test -- --colors
+          npm run test
 # End of test section
 
 # Deploy section
-  Deploy:
+  Depoly:
     needs: [Build, Test]
     runs-on: ubuntu-latest
     if: ${{ github.ref =='refs/heads/master' }}
-    
+
     name: Deploy to EC2 instance
+
     steps:
       - name: Checkout the files
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
 
-# End of deploy section
+      - name: Add Python
+        uses: actions/setup-python@v2.3.1
+        with:
+          python-version: '3.8'
+
+      - name: Setup Ansible
+        run: pip3 install ansible boto boto3
+  # End of deploy section
