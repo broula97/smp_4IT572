@@ -4,6 +4,7 @@ name: "Build and test our Eshop"
 on:
   workflow_dispatch:
   push:
+  pull_request:
 
 jobs:
 #Install section
@@ -94,19 +95,20 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run test
+          npm run test -- --colors
 # End of test section
 
 # Deploy section
-  Depoly:
+  Deploy:
     needs: [Build, Test]
     runs-on: ubuntu-latest
     if: ${{ github.ref =='refs/heads/master' }}
     
     name: Deploy to EC2 instance
-
     steps:
       - name: Checkout the files
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
 
 # End of deploy section
